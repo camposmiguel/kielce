@@ -4,11 +4,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
     boolean isPlayingPlayer1 = true;
     int[] selectedCells = {0,0,0,0,0,0,0,0,0};
+    TextView textViewPlayer;
+    String player1Name, player2Name;
 
     // selectedCells[0] = 1 >> The player 1 selected the cell number 0
     /*
@@ -31,6 +34,15 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        // Get the variables that we receive in the Intent object
+        Bundle extras = getIntent().getExtras();
+        player1Name = extras.getString("p1Name");
+        player2Name = extras.getString("p2Name");
+
+        textViewPlayer = (TextView) findViewById(R.id.textViewPlayer);
+        textViewPlayer.setText(player1Name);
+
     }
 
     public void cellClicked(View view) {
@@ -72,10 +84,14 @@ public class GameActivity extends AppCompatActivity {
         if(selectedCells[position]==0) { // It's possible to play with this cell
             if (isPlayingPlayer1) {
                 cell.setImageResource(R.drawable.ic_player_1);
+                selectedCells[position] = 1;
                 isPlayingPlayer1 = false;
+                textViewPlayer.setText(player2Name);
             } else {
                 cell.setImageResource(R.drawable.ic_player_2);
+                selectedCells[position] = 2;
                 isPlayingPlayer1 = true;
+                textViewPlayer.setText(player1Name);
             }
         } else {
             Toast.makeText(this, "The cell isn't empty!", Toast.LENGTH_SHORT).show();

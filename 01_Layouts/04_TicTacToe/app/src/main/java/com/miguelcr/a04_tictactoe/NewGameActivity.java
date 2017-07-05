@@ -38,6 +38,8 @@ public class NewGameActivity extends AppCompatActivity {
                     .show();
         } else {
             Intent i = new Intent(NewGameActivity.this, GameActivity.class);
+            i.putExtra("p1Name",player1);
+            i.putExtra("p2Name",player2);
             startActivity(i);
         }
     }
