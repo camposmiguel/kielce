@@ -2,6 +2,9 @@ package com.miguelcr.a04_tictactoe;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +16,7 @@ public class GameActivity extends AppCompatActivity {
     TextView textViewPlayer;
     String player1Name, player2Name;
     boolean gameOver = false;
+    ImageView iv1, iv2, iv3, iv4, iv5, iv6, iv7, iv8, iv9;
 
     // selectedCells[0] = 1 >> The player 1 selected the cell number 0
     /*
@@ -42,6 +46,16 @@ public class GameActivity extends AppCompatActivity {
         player2Name = extras.getString("p2Name");
 
         textViewPlayer = (TextView) findViewById(R.id.textViewPlayer);
+        iv1 = (ImageView) findViewById(R.id.imageView1);
+        iv2 = (ImageView) findViewById(R.id.imageView2);
+        iv3 = (ImageView) findViewById(R.id.imageView3);
+        iv4 = (ImageView) findViewById(R.id.imageView4);
+        iv5 = (ImageView) findViewById(R.id.imageView5);
+        iv6 = (ImageView) findViewById(R.id.imageView6);
+        iv7 = (ImageView) findViewById(R.id.imageView7);
+        iv8 = (ImageView) findViewById(R.id.imageView8);
+        iv9 = (ImageView) findViewById(R.id.imageView9);
+
         textViewPlayer.setText(player1Name);
 
     }
@@ -179,8 +193,75 @@ public class GameActivity extends AppCompatActivity {
                 && selectedCells[0] == selectedCells[4]
                 && selectedCells[4] == selectedCells[8]) {
             winner = true;
-        } 
+        } else if(selectedCells[2]!=0
+                && selectedCells[2] == selectedCells[4]
+                && selectedCells[4] == selectedCells[6]) {
+            winner = true;
+        } else if(selectedCells[0]!=0
+                && selectedCells[0] == selectedCells[3]
+                && selectedCells[3] == selectedCells[6]) {
+            winner = true;
+        } else if(selectedCells[1]!=0
+                && selectedCells[1] == selectedCells[4]
+                && selectedCells[4] == selectedCells[7]) {
+            winner = true;
+        } else if(selectedCells[2]!=0
+                && selectedCells[2] == selectedCells[5]
+                && selectedCells[5] == selectedCells[8]) {
+            winner = true;
+        } else if(selectedCells[0]!=0
+                && selectedCells[0] == selectedCells[1]
+                && selectedCells[1] == selectedCells[2]) {
+            winner = true;
+        } else if(selectedCells[3]!=0
+                && selectedCells[3] == selectedCells[4]
+                && selectedCells[4] == selectedCells[5]) {
+            winner = true;
+        } else if(selectedCells[6]!=0
+                && selectedCells[6] == selectedCells[7]
+                && selectedCells[7] == selectedCells[8]) {
+            winner = true;
+        }
 
         return winner;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.game_options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_restart_game:
+                restartGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void restartGame() {
+        isPlayingPlayer1 = true;
+        textViewPlayer.setText(player1Name);
+        gameOver = false;
+        iv1.setImageResource(R.drawable.ic_empty);
+        iv2.setImageResource(R.drawable.ic_empty);
+        iv3.setImageResource(R.drawable.ic_empty);
+        iv4.setImageResource(R.drawable.ic_empty);
+        iv5.setImageResource(R.drawable.ic_empty);
+        iv6.setImageResource(R.drawable.ic_empty);
+        iv7.setImageResource(R.drawable.ic_empty);
+        iv8.setImageResource(R.drawable.ic_empty);
+        iv9.setImageResource(R.drawable.ic_empty);
+
+        for(int i=0; i<8; i++) {
+            selectedCells[i]=0;
+        }
     }
 }
