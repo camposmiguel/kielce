@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         // Load an image from Internet
         Picasso.with(this)
                 .load("https://media-cdn.tripadvisor.com/media/photo-s/07/9b/68/0c/binkowski-hotel.jpg")
+                .resize(100,150)
+                .centerCrop()
                 .into(imageViewHotelPhoto);
 
     }
