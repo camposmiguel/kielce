@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">01_SimpleListView</string>
+    <string name="dialog_message" translatable="false">Write the student name to create the new student</string>
+    <string name="dialog_title" translatable="false">New student</string>
+</resources>

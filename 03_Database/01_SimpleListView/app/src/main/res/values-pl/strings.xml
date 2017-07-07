@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">01_SimpleListView</string>
+    <string name="dialog_message">Wpisz nazwę studenta, aby utworzyć nowego studenta</string>
+    <string name="dialog_title">Nowy uczeń</string>
+</resources>
