@@ -40,6 +40,7 @@ public class StudentAdapter extends ArrayAdapter<Student> {
 
         // 2. Get all the view components references
         TextView textViewName = (TextView) v.findViewById(R.id.textViewName);
+        textViewName.setText(current.getName());
 
         return v;
     }

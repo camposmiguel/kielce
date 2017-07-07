@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     List<Student> students;
     EditText editTextName;
     Realm realm;
+    StudentAdapter adapterStudents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         students = realm.where(Student.class).findAll();
 
         // 3. Adapter (convert List<String> into ListView elements)
-        StudentAdapter adapterStudents = new StudentAdapter(
+        adapterStudents = new StudentAdapter(
                 this,
-                android.R.layout.simple_list_item_1,
+                R.layout.student_item,
                 students
         );
 
@@ -113,6 +114,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Toast.makeText(MainActivity.this, "Name: "+editTextName.getText().toString(), Toast.LENGTH_SHORT).show();
+                Student newStudent = new Student();
+                newStudent.setName(editTextName.getText().toString());
+
+                realm.beginTransaction();
+                realm.copyToRealm(newStudent);
+                realm.commitTransaction();
+
+                // Get the new list of students from de Database
+                students = realm.where(Student.class).findAll();
+                adapterStudents.notifyDataSetChanged();
+
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
