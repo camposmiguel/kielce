@@ -2,4 +2,7 @@
     <string name="app_name" translatable="false">01_SimpleListView</string>
     <string name="dialog_message" translatable="false">Write the student name to create the new student</string>
     <string name="dialog_title" translatable="false">New student</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="student_name">Student name</string>
 </resources>
