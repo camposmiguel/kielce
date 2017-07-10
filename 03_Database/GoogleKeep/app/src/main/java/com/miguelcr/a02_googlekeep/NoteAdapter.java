@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             priority.setImageResource(R.drawable.ic_low_priority_white_24px);
         }
 
-        layout.setBackgroundColor(current.getColor());
+        layout.setBackgroundColor(ContextCompat.getColor(ctx,current.getColor()));
 
         return v;
     }
