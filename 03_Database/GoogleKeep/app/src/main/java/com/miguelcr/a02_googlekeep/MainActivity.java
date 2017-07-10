@@ -8,14 +8,25 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
     ListView lista;
     List<Note> noteList;
+    EditText editTextTitle, editTextDescription;
+    RadioGroup radioGroupColors;
+    Switch switchPriority;
+    Realm realm;
+    NoteAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
         lista = (ListView) findViewById(R.id.listViewNotes);
 
+        // Database initialization
+        initRealm();
+        realm = Realm.getDefaultInstance();
 
-        noteList = new ArrayList<>();
-        noteList.add(new Note("Supermarket","Milk, bread, eggs,...",R.color.colorBlue,true));
-        noteList.add(new Note("Supermarket low cost","PS4, TV, pizza hut,...",R.color.colorGreen,false));
+        noteList = realm.where(Note.class).findAll();
 
-        NoteAdapter adapter = new NoteAdapter(
+        adapter = new NoteAdapter(
                 this,
                 R.layout.note_item,
                 noteList
@@ -38,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
         lista.setAdapter(adapter);
 
 
+    }
+
+    private void initRealm() {
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 
     @Override
@@ -66,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_new_note, null);
         builder.setView(view);
 
+        // Get the view components
+        editTextTitle = (EditText) view.findViewById(R.id.editTextTItle);
+        editTextDescription = (EditText) view.findViewById(R.id.editTextDescription);
+        radioGroupColors = (RadioGroup) view.findViewById(R.id.radioGroupColors);
+        switchPriority = (Switch) view.findViewById(R.id.switchHighPriority);
+
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setMessage(R.string.dialog_message_new_note)
                .setTitle(R.string.dialog_title_new_note);
@@ -73,6 +100,33 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.save_new_note, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
+
+                Note newUserNote = new Note();
+                newUserNote.setTitle(editTextTitle.getText().toString());
+                newUserNote.setDescription(editTextDescription.getText().toString());
+                int radioButtonSelected = radioGroupColors.getCheckedRadioButtonId();
+                switch(radioButtonSelected) {
+                    case R.id.radioButtonBlue:
+                        newUserNote.setColor(R.color.colorBlue);
+                        break;
+                    case R.id.radioButtonGreen:
+                        newUserNote.setColor(R.color.colorGreen);
+                        break;
+                    case R.id.radioButtonYellow:
+                        newUserNote.setColor(R.color.colorYellow);
+                        break;
+                }
+                newUserNote.setHighPriority(switchPriority.isChecked());
+
+
+                realm.beginTransaction();
+                realm.copyToRealm(newUserNote);
+                realm.commitTransaction();
+
+                noteList = realm.where(Note.class).findAll();
+                adapter.notifyDataSetChanged();
+
+
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
