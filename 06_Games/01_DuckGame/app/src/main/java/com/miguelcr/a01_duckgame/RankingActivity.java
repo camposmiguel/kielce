@@ -23,6 +23,8 @@ public class RankingActivity extends AppCompatActivity {
 
         lista = (ListView) findViewById(R.id.listView);
 
+        getSupportActionBar().setTitle("Ranking");
+
         initRealm();
         realm = Realm.getDefaultInstance();
 

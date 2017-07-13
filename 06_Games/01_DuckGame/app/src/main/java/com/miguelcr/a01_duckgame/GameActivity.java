@@ -20,13 +20,14 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     @BindView(R.id.textViewNick) TextView nick;
     @BindView(R.id.textViewCounter) TextView counter;
     @BindView(R.id.textViewTimer) TextView timer;
     @BindView(R.id.imageViewDuck) ImageView duck;
     Random random;
     Realm realm;
+    AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,11 @@ public class GameActivity extends AppCompatActivity {
 
         duckRandom();
 
+        startCountDown();
+
+    }
+
+    private void startCountDown() {
         // 3. Start countdown
         // CountDownTimer (total milliseconds for the countdown, period between 2 seconds)
         // 1min = 60s = 60000ms
@@ -67,7 +73,6 @@ public class GameActivity extends AppCompatActivity {
                 showDialogGameOver();
             }
         }.start();
-
     }
 
     private void saveUser() {
@@ -112,14 +117,16 @@ public class GameActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_game_over, null);
         builder.setView(view);
 
-        Button btnRestart = (Button) findViewById(R.id.buttonRestart);
-        Button btnExit = (Button) findViewById(R.id.buttonExit);
-        Button btnRank = (Button) findViewById(R.id.buttonRanking);
+        Button btnRestart = (Button) view.findViewById(R.id.buttonRestart);
+        Button btnExit = (Button) view.findViewById(R.id.buttonExit);
+        Button btnRank = (Button) view.findViewById(R.id.buttonRanking);
 
         btnRestart.setOnClickListener(this);
+        btnExit.setOnClickListener(this);
+        btnRank.setOnClickListener(this);
 
         // 3. Get the AlertDialog from create()
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
 
         dialog.show();
     }
@@ -149,5 +156,31 @@ public class GameActivity extends AppCompatActivity {
                 .schemaVersion(1)
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        switch (id) {
+            case R.id.buttonRestart:
+                counter.setText("0");
+                duckRandom();
+
+                // Close dialog
+                dialog.dismiss();
+
+                // start countdowntimer
+                startCountDown();
+
+                break;
+            case R.id.buttonExit:
+                finish();
+                break;
+            case R.id.buttonRanking:
+                Intent i = new Intent(this,RankingActivity.class);
+                startActivity(i);
+                break;
+        }
     }
 }
