@@ -2,6 +2,7 @@ package com.miguelcr.a01_duckgame;
 
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -16,6 +17,8 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class GameActivity extends AppCompatActivity {
     @BindView(R.id.textViewNick) TextView nick;
@@ -23,11 +26,15 @@ public class GameActivity extends AppCompatActivity {
     @BindView(R.id.textViewTimer) TextView timer;
     @BindView(R.id.imageViewDuck) ImageView duck;
     Random random;
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        initRealm();
+        realm = Realm.getDefaultInstance();
 
         // Butter knife connection
         ButterKnife.bind(this);
@@ -45,6 +52,31 @@ public class GameActivity extends AppCompatActivity {
 
         duckRandom();
 
+        // 3. Start countdown
+        // CountDownTimer (total milliseconds for the countdown, period between 2 seconds)
+        // 1min = 60s = 60000ms
+        new CountDownTimer(6000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                timer.setText(millisUntilFinished / 1000 +"s");
+            }
+
+            public void onFinish() {
+                timer.setText("0s");
+                saveUser();
+                showDialogGameOver();
+            }
+        }.start();
+
+    }
+
+    private void saveUser() {
+        int points = Integer.parseInt(counter.getText().toString());
+        User user = new User(nick.getText().toString(),points);
+
+        realm.beginTransaction();
+        realm.copyToRealm(user);
+        realm.commitTransaction();
     }
 
     public void duckClicked(View view) {
@@ -62,22 +94,34 @@ public class GameActivity extends AppCompatActivity {
         // 2. GENERATE A NEW DUCK RANDOM POSITION 
         duckRandom();
 
-        // 3. Start countdown
-
-        // CountDownTimer (total milliseconds for the countdown, period between 2 seconds)
-        // 1min = 60s = 60000ms
-        new CountDownTimer(60000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                timer.setText(millisUntilFinished / 1000 +"s");
-            }
-
-            public void onFinish() {
-                timer.setText("Game over!");
-            }
-        }.start();
 
 
+    }
+
+    private void showDialogGameOver() {
+
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Select one option")
+                .setTitle("Game over");
+
+        builder.setCancelable(false);
+
+        View view = getLayoutInflater().inflate(R.layout.dialog_game_over, null);
+        builder.setView(view);
+
+        Button btnRestart = (Button) findViewById(R.id.buttonRestart);
+        Button btnExit = (Button) findViewById(R.id.buttonExit);
+        Button btnRank = (Button) findViewById(R.id.buttonRanking);
+
+        btnRestart.setOnClickListener(this);
+
+        // 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
     private void duckRandom() {
@@ -96,5 +140,14 @@ public class GameActivity extends AppCompatActivity {
         duck.setX(randomX);
         duck.setY(randomY);
 
+    }
+
+    private void initRealm() {
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 }

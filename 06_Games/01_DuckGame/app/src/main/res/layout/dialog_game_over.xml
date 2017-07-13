@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/buttonRestart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restart game" />
+
+    <Button
+        android:id="@+id/buttonRanking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Ranking" />
+
+    <Button
+        android:id="@+id/buttonExit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exit" />
+</LinearLayout>
